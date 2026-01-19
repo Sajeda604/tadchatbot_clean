@@ -25,3 +25,4 @@ env
 
 # Logs
 *.log
+vectorstore/
