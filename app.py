@@ -66,34 +66,74 @@ def get_vectorstore():
 GREETINGS = ["مرحبا", "أهلاً", "أهلا", "هاي", "السلام عليكم"]
 
 # قائمة الأسئلة المقترحة بناءً على البيانات
+
+
 SUGGESTED_QUESTIONS = [
-    "ما هي خدمات تطوير التطبيقات التي يقدمها المكتب؟",
-    "هل يقدم المكتب حلول الذكاء الاصطناعي والـ Chatbots؟",
-    "ما هي أنظمة ERP و CRM التي يطورها المكتب؟",
-    "كيف يقوم المكتب بتطوير المتاجر الإلكترونية؟",
-    "ما هي خدمات الأمن السيبراني المتاحة؟",
-    "هل يوفر المكتب خدمات استضافة وسيرفرات؟",
-    "ما هي المشاريع السابقة للمكتب؟",
-    "كيف يتم تطوير نظام حجز المواعيد الطبي؟",
-    "ما هي تقنيات التعلم الآلي التي يستخدمها المكتب؟",
-    "هل يقدم المكتب خدمات التسويق الرقمي؟",
-    "ما هي القيم الأساسية للمكتب؟",
-    "كيف يتم بناء منصة تعليم إلكترونية؟",
+    "كيف أنشئ مشروع جديد؟",
+    "كيف أضيف مهمة جديدة؟",
+    "كيف أضيف مستخدم جديد؟",
+    "كيف أنشئ فريق عمل؟",
+    "كيف أعدل مشروع؟",
+    "كيف أرى الإشعارات؟",
+    "كيف أفتح التقارير؟",
+    "ما معنى حالة Pending في المهام؟",
+    "كيف أفلتر المهام؟",
+    "كيف أغير إعدادات النظام؟"
+
 ]
 
 # Prompt للبوت الذكي + سؤال متابعة
 retrieval_prompt = PromptTemplate(
     input_variables=["context", "input"],
     template="""
-أنت مساعد ذكي متخصص في الإجابة عن أسئلة حول خدمات المكتب البرمجي. أنت دقيق، منطقي، وقادر على الفهم والتفسير. مهمتك:
+You are an AI assistant for the Madar project management system.
 
-1. إذا كان السؤال موجودًا في السياق (context)، أجب بطريقة واضحة ومقنعة، حتى لو كان السؤال مختصرًا أو استخدم كلمات مشابهة.
-2. إذا لم يكن السؤال موجودًا نصيًا في المستندات، حاول شرح الإجابة بناءً على المعرفة العامة عن صناعة البرمجيات، مع الإشارة إلى أنها من المعرفة العامة وليست من المستندات.
-3. اجعل إجابتك مفهومة وسهلة، قصيرة وواضحة ومقنعة.
-4. لا تختلق معلومات غير صحيحة.
-5. بعد كل إجابة، اقترح سؤال متابعة قصير وملائم يتعلق بخدمات المكتب.
-6. إذا لم تعرف الإجابة، أجب: "لا توجد معلومات متاحة في المستندات حول هذا الموضوع".
+Your role is to help users understand how to use the Madar dashboard and its features. 
+You guide users through tasks such as managing projects, tasks, users, teams, systems, vendors, reports, and settings.
 
+Rules:
+
+1. Always give clear step-by-step instructions when explaining how to perform an action.
+2. Use simple and professional language.
+3. Only answer questions related to the Madar system interface and features.
+4. If the question is outside the Madar system, respond politely that you can only help with Madar platform questions.
+5. Do not invent features that do not exist in the system.
+6. If the information is unclear, ask the user for clarification.
+7. Use UI terminology such as:
+   - Dashboard
+   - Sidebar
+   - Projects
+   - Tasks
+   - Users
+   - Teams
+   - Systems
+   - Vendors
+   - Reports
+   - Settings
+
+Response style:
+
+• Short and clear  
+• Use numbered steps when explaining actions  
+• Focus on helping the user complete a task in the interface
+
+Example:
+
+User: How do I create a new project?
+
+Assistant:
+
+To create a new project:
+
+1. Open the sidebar.
+2. Click **Projects**.
+3. Click **Create New Project**.
+4. Enter the project information.
+5. Click **Save**.
+
+If the user asks about something not related to Madar:
+
+"I'm here to help with the Madar system. Could you ask a question related to the dashboard or its features?"
 السياق (المستندات):
 {context}
 
@@ -121,11 +161,9 @@ def main():
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
-    # عرض المحادثات السابقة
     for msg in st.session_state.messages:
         st.chat_message(msg["role"]).markdown(msg["content"])
 
-    # إذا تم اختيار سؤال من القائمة، استخدمه
     if selected_question:
         user_prompt = selected_question
     else:
